@@ -55,9 +55,33 @@ from pyspark.mllib.linalg import Vectors
 sc =SparkContext()
 corpus = sc.parallelize(data_features)
 
+ldaModel = LDA.train(corpus, k=3)
 
+# Output topics. Each is a distribution over words (matching word count vectors)
+print("Learned topics (as distributions over vocab of " + str(ldaModel.vocabSize()) + " words):")
+topics = ldaModel.topicsMatrix()
+for topic in range(3):
+    print("Topic " + str(topic) + ":")
+    for word in range(0, ldaModel.vocabSize()):
+        print(" " + str(topics[word][topic]))
+    
+# Save and load model
+model.save(sc, "myModelPath")
+sameModel = LDAModel.load(sc, "myModelPath")
 
+ldaModel = LDA.train(corpus, k=3)
 
+# Output topics. Each is a distribution over words (matching word count vectors)
+print("Learned topics (as distributions over vocab of " + str(ldaModel.vocabSize()) + " words):")
+topics = ldaModel.topicsMatrix()
+for topic in range(3):
+    print("Topic " + str(topic) + ":")
+    for word in range(0, ldaModel.vocabSize()):
+        print(" " + str(topics[word][topic]))
+    
+# Save and load model
+model.save(sc, "myModelPath")
+sameModel = LDAModel.load(sc, "myModelPath")
 
 
 
@@ -140,3 +164,4 @@ def fn_CorpusFromDIR(xDIR):
 d1 = fn_tdm_df(docs = fn_CorpusFromDIR(DIR)['docs'],
           xColNames = fn_CorpusFromDIR(DIR)['ColNames'], 
           stop_words=None, charset_error = 'replace')  
+'''
