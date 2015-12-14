@@ -12,7 +12,7 @@ from Word2VecUtility import Word2VecUtility
 import sklearn
 import sklearn.feature_extraction
 
-post_tree=ET.parse('/Users/Zhen/Desktop/Courses/BigData/stackexchange/Posts.xml')
+post_tree=ET.parse('/Users/Zhen/Desktop/Courses/BigData/stackexchange/data/Posts.xml')
 post=[(i.attrib.get("PostTypeId"),i.attrib.get("CreationDate"),i.attrib.get("Body") ) for i in post_tree.getroot()] 
 post_frame=DataFrame(post,columns=['PostTypeId','CreationDate','Body'])
 post_body=post_frame.loc[:,'Body']
@@ -47,9 +47,41 @@ print('vectorizer.vocabulary_: {0}'.format(vectorizer.vocabulary_))
 
 
 
+##################################
+
 from pyspark import SparkContext
 from pyspark.mllib.clustering import LDA, LDAModel
 from pyspark.mllib.linalg import Vectors
+from pyspark.mllib.feature import HashingTF
+data = sc.textFile("/Users/Zhen/desktop/Courses/BigData/stackexchange/data/post_body2.csv")
+parsedData = data.map(lambda line: line.split(" "))
+hashingTF = HashingTF()
+tf = hashingTF.transform(parsedData)
+
+ldaModel = LDA.train(tf, k=3)
+
+inp =data.map(lambda row: row.split(" "))
+word2vec = Word2Vec()
+model = word2vec.fit(inp)
+
+schema = sqlContext.inferSchema(data)
+
+def isfloat(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
+
+from pyspark.mllib.feature import Word2Vec
+word2vec = Word2Vec()
+model = word2vec.fit(parsedData)
+
+
+sqlContext = SQLContext(sc)
+df = sqlContext.DataFrame(parsedData)
+
 
 # Load and parse the data
 sc =SparkContext()
@@ -83,85 +115,3 @@ for topic in range(3):
 model.save(sc, "myModelPath")
 sameModel = LDAModel.load(sc, "myModelPath")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-import textmining
-def termdocumentmatrix_example(textlist):
-    # Create some very short sample documents
-
-    # Initialize class to create term-document matrix
-	tdm = textmining.TermDocumentMatrix()
-    # Add the documents
-	for i in xrange(0,len(textlist)):
-		tdm.add_doc(textlist[i])
-
-    # Write out the matrix to a csv file. Note that setting cutoff=1 means
-    # that words which appear in 1 or more documents will be included in
-    # the output (i.e. every word will appear in the output). The default
-    # for cutoff is 2, since we usually aren't interested in words which
-    # appear in a single document. For this example we want to see all
-    # words however, hence cutoff=1.
-	tdm.write_csv('matrix.csv', cutoff=1)
-    # Instead of writing out the matrix you can also access its rows directly.
-    # Let's print them to the screen.
-	for row in tdm.rows(cutoff=1):
-			print row
-
-
-termdocumentmatrix_example(clean_post)
-
-
-
-
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer 
-
-def fn_tdm_df(docs, xColNames = None, **kwargs):
-    ''' create a term document matrix as pandas DataFrame
-    with **kwargs you can pass arguments of CountVectorizer
-    if xColNames is given the dataframe gets columns Names'''
-
-    #initialize the  vectorizer
-    vectorizer = CountVectorizer(**kwargs)
-    x1 = vectorizer.fit_transform(docs)
-    #create dataFrame
-    df = pd.DataFrame(x1.toarray().transpose(), index = vectorizer.get_feature_names())
-    if xColNames is not None:
-        df.columns = xColNames
-
-    return df
-
-DIR = 'C:/Data/'
-
-def fn_CorpusFromDIR(xDIR):
-    ''' functions to create corpus from a Directories
-    Input: Directory
-    Output: A dictionary with 
-             Names of files ['ColNames']
-             the text in corpus ['docs']'''
-    import os
-    Res = dict(docs = [open(os.path.join(xDIR,f)).read() for f in os.listdir(xDIR)],
-               ColNames = map(lambda x: 'P_' + x[0:6], os.listdir(xDIR)))
-    return Res
-
-d1 = fn_tdm_df(docs = fn_CorpusFromDIR(DIR)['docs'],
-          xColNames = fn_CorpusFromDIR(DIR)['ColNames'], 
-          stop_words=None, charset_error = 'replace')  
-'''
