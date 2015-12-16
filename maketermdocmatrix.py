@@ -28,7 +28,7 @@ for i in xrange( 0, len(post_body)):
 
 import textmining
 import os
-xDIR = 'parse_clean'
+xDIR = 'parse'
 def termdocumentmatrix_example(xDIR):
     
     # Initialize class to create term-document matrix
@@ -36,7 +36,7 @@ def termdocumentmatrix_example(xDIR):
     tdm = textmining.TermDocumentMatrix()
     for i in os.listdir(xDIR):
     	Res = tdm.add_doc(open(os.path.join(xDIR,i)).read()) 
-    	if count>40:
+    	if count>40: #如果是在所有文档上跑，就要把这里注释掉
     		break
 
 
@@ -46,7 +46,7 @@ def termdocumentmatrix_example(xDIR):
     # for cutoff is 2, since we usually aren't interested in words which
     # appear in a single document. For this example we want to see all
     # words however, hence cutoff=1.
-    tdm.write_csv('matrix0.csv', cutoff=1)
+    tdm.write_csv('matrix0.csv', cutoff=1) #输出结果
     # Instead of writing out the matrix you can also access its rows directly.
     # Let's print them to the screen.
     for row in tdm.rows(cutoff=1):
