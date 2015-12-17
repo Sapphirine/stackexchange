@@ -8,11 +8,8 @@ import numpy as np
 
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
-
 from nltk.stem.porter import *
-
 from gensim.models.doc2vec import LabeledSentence
-
 
 class Word2VecUtility(object):
 
