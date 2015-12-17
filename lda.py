@@ -21,7 +21,7 @@ topics = ldaModel.topicsMatrix()
 for topic in range(3):
     print("Topic " + str(topic) + ":")
     for word in range(0, ldaModel.vocabSize()):
-        print(" " + str(topics[word][topic]))
+        print(" " + str(topics[word]))
 		
 # Save and load model
 ldaModel.save(sc, "/Users/Zhen/desktop/Courses/BigData/stackexchange/lda_result")
