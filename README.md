@@ -1,5 +1,26 @@
 # stackexchange
-Code for project in EECSE 6893Big data 
+
+Stack Exchange is a Q&A platform where software engineers, scientists, students share knowledge and get questions answered.
+
+As users, we are interested in: 
+- What are heated discussed topics 
+- How to filtering best answers among all the given answers
+
+As developers, we are interested in: 
+-The problems users are facing and how they can take such information to improve their products and documentation. 
+
+Our project addresses such problems by 
+- Extracting topics out of large amount of posts and the topic distribution of each document 
+- Predicting the best answers by building a classification model 
+- Visualizing the “network” of questions, to know what’s the trends and relationships among discussed topics
+
+
+Analytics: - Text mining and feature extraction: NLTK and text mining tools in Python, Spark LDA API with Python and Scala 
+- Sentiment analysis using AlchemyAPI 
+- Classification algorithms: Random Forest 
+- Building the graph database in Neo4j 
+- Visualizations from D3.js toolkit for implementing a visualization to represent the output 
+
 
 ## LDA; intermediate results are saved in result folder
 *make_tdm.ipynb or make_tdm.py clean the dataset using the module Word2VecUtility.py[1] and then generate the work-document matrix matrix.csv for the input of our LDA model. 
